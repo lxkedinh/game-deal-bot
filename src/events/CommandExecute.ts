@@ -1,21 +1,18 @@
 import { CommandInteraction } from 'discord.js';
-const { ExtendedClient } = require('../structures/Client');
+import ExtendedClient from '../structures/ExtendedClient';
 
 module.exports = {
     name: 'interactionCreate',
-    async execute(
-        interaction: CommandInteraction,
-        client: typeof ExtendedClient
-    ) {
+    async execute(interaction: CommandInteraction, client: ExtendedClient) {
         const command = client.commands.get(interaction.commandName);
 
         if (!command) return;
 
         try {
-            await command.execute(interaction);
+            command.execute(interaction);
         } catch (error) {
             console.error(error);
-            await interaction.reply({
+            interaction.reply({
                 content:
                     'There was an error while executing this command. Please try again later!',
                 ephemeral: true,

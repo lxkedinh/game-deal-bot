@@ -1,8 +1,9 @@
-import { Client, Collection, CommandInteraction, Intents } from 'discord.js';
+import { Client, Collection, Intents } from 'discord.js';
+import BotCommand from './BotCommand';
 
-export class ExtendedClient extends Client {
+export default class ExtendedClient extends Client {
     // commands property to easily access commands in other files
-    commands: Collection<string, CommandInteraction> = new Collection();
+    commands: Collection<string, BotCommand> = new Collection();
 
     constructor() {
         super({

@@ -1,9 +1,8 @@
-import fs = require('fs');
-import path = require('path');
-
-const { ExtendedClient } = require('./structures/Client');
-require('dotenv').config();
-
+import fs from 'fs';
+import path from 'path';
+import ExtendedClient from './structures/ExtendedClient';
+import dotenv from 'dotenv';
+dotenv.config();
 const client = new ExtendedClient();
 
 // add commands to bot instance
@@ -16,7 +15,8 @@ for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     // Set a new item in the Collection
-    // With the key as the command name and the value as the exported module
+    // With the key as the command name and the value as the exported bot
+    // command module
     client.commands.set(command.data.name, command);
 }
 
@@ -38,4 +38,4 @@ for (const file of eventFiles) {
     }
 }
 
-client.login(process.env.TOKEN);
+client.login(process.env.BOT_TOKEN);

@@ -1,6 +1,6 @@
 import { MessageEmbed, ColorResolvable, Message, User } from 'discord.js';
 import { Game } from './Game';
-import row from './buttons';
+import { row } from './buttons';
 
 export class Paginator {
     pages: MessageEmbed[] = [];

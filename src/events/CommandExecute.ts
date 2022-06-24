@@ -9,7 +9,8 @@ module.exports = {
         if (!command) return;
 
         try {
-            command.execute(interaction);
+            if (command.needsClient) command.execute(interaction, client);
+            else command.execute(interaction);
         } catch (error) {
             console.error(error);
             interaction.reply({

@@ -8,10 +8,11 @@ import {
     ColorResolvable,
     Message,
 } from 'discord.js';
-import row from '../structures/buttons';
+import { row } from '../structures/buttons';
 import { embedColor } from '../structures/Embed';
 import { fetchGameImg, searchDeals, searchGame } from '../requests';
 import { Paginator } from '../structures/Paginator';
+import ExtendedClient from '../structures/ExtendedClient';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,6 +24,7 @@ module.exports = {
                 .setDescription('The name of the game to search')
                 .setRequired(true)
         ),
+    needsClient: false,
     async execute(interaction: CommandInteraction) {
         if (!interaction.isCommand()) return;
 

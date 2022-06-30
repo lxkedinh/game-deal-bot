@@ -2,17 +2,11 @@ import {
     SlashCommandStringOption,
     SlashCommandBuilder,
 } from '@discordjs/builders';
-import {
-    CommandInteraction,
-    MessageEmbed,
-    ColorResolvable,
-    Message,
-} from 'discord.js';
+import { CommandInteraction, MessageEmbed, Message } from 'discord.js';
 import { row } from '../structures/buttons';
 import { embedColor } from '../structures/Embed';
 import { fetchGameImg, searchDeals, searchGame } from '../requests';
 import { Paginator } from '../structures/Paginator';
-import ExtendedClient from '../structures/ExtendedClient';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -49,7 +43,7 @@ module.exports = {
 
             // create message embeds for pages
             const paginator = new Paginator();
-            paginator.generateSearchPages(gameSearchData, embedColor);
+            paginator.generateSearchPages(gameSearchData);
 
             interaction.reply({
                 embeds: [paginator.getCurrentPage()],
@@ -64,15 +58,16 @@ module.exports = {
             );
 
             // Collect message input for index number of game to search for
-            const filter = (m: Message) => m.author.id === interaction.user.id;
             const msgCollector = interaction.channel?.createMessageCollector({
-                filter,
                 time: 30000,
             });
 
             msgCollector?.on('collect', async (m) => {
+                // only collect messages from the user who triggered this
+                // specific bot command interaction
+                if (m.author.id != interaction.user.id) return;
+
                 const gameSelectedIndex = parseInt(m.content);
-                const gameSelected = gameSearchData[gameSelectedIndex - 1];
                 // input invalid if user did not input a number or a number outside of search result indices
                 if (
                     isNaN(gameSelectedIndex) ||
@@ -92,6 +87,8 @@ module.exports = {
                     // user chooses valid number index for a game to search
                     // deals for
                 } else {
+                    const gameSelected = gameSearchData[gameSelectedIndex - 1];
+
                     // destroy initial button collector on search results pages becauser user already chose a desired game
                     btnCollector.stop();
 
@@ -101,10 +98,24 @@ module.exports = {
                     // fetch current prices for selected game from API
                     const priceList = await searchDeals(gameSelected.plain);
 
+                    // notify user if the game they chose has no listings in
+                    // any of the stores in API database
+                    if (priceList.length == 0) {
+                        m.reply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setColor(embedColor)
+                                    .setDescription(
+                                        `There are no deals listed for **${gameSelected.title}**. Try again.`
+                                    ),
+                            ],
+                        });
+                        return;
+                    }
+
                     paginator.generateDealPages(
                         priceList,
                         gameSelected.title,
-                        embedColor,
                         gameImg
                     );
 

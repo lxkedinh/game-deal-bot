@@ -1,4 +1,5 @@
-import { MessageEmbed, ColorResolvable, Message, User } from 'discord.js';
+import { MessageEmbed, ColorResolvable, Message } from 'discord.js';
+import { embedColor } from './Embed';
 import { Game } from './Game';
 import { row } from './buttons';
 
@@ -14,7 +15,7 @@ export class Paginator {
      * generate embed pages from
      * @param color hex color code to set the embed color as
      */
-    generateSearchPages(games: Game[], color: ColorResolvable) {
+    generateSearchPages(games: Game[]) {
         let embeds: MessageEmbed[] = [];
         let currentEmbed = 0;
         let searchResults = 'Select a game to find deals for!\n\n';
@@ -28,7 +29,7 @@ export class Paginator {
                 embeds[currentEmbed] = new MessageEmbed()
                     .setTitle('Game Search Results')
                     .setDescription(searchResults)
-                    .setColor(color);
+                    .setColor(embedColor);
                 searchResults = 'Select a game to find deals for!\n\n';
                 currentEmbed++;
             }
@@ -63,12 +64,7 @@ export class Paginator {
      * @param color hex color code to set the embed color as
      * @param image url to a thumbnail image of the game
      */
-    generateDealPages(
-        prices: any,
-        name: string,
-        color: ColorResolvable,
-        image: string
-    ) {
+    generateDealPages(prices: any, name: string, image: string) {
         let embeds: MessageEmbed[] = [];
         let currentEmbed = 0;
         let deals = '';
@@ -86,19 +82,19 @@ export class Paginator {
                 embeds[currentEmbed++] = new MessageEmbed()
                     .setTitle(name)
                     .setDescription(deals)
-                    .setColor(color)
+                    .setColor(embedColor)
                     .setThumbnail(image);
                 embeds[currentEmbed] = new MessageEmbed()
                     .setTitle(name)
                     .setDescription(storeDeal)
-                    .setColor(color);
+                    .setColor(embedColor);
             }
             // embed character limit hit and not last item
             else if (embedLimit) {
                 embeds[currentEmbed++] = new MessageEmbed()
                     .setTitle(name)
                     .setDescription(deals)
-                    .setColor(color)
+                    .setColor(embedColor)
                     .setThumbnail(image);
                 deals = storeDeal;
             }
@@ -107,7 +103,7 @@ export class Paginator {
                 embeds[currentEmbed++] = new MessageEmbed()
                     .setTitle(name)
                     .setDescription(deals + storeDeal)
-                    .setColor(color)
+                    .setColor(embedColor)
                     .setThumbnail(image);
             }
             // embed character limit not hit and not last item

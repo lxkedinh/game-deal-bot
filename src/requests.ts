@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Game, GameSearchResponse } from './structures/Game';
 
 /**
  * fetches a list of games matching user's query from IsThereAnyDeal.com API

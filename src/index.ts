@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import ExtendedClient from './structures/ExtendedClient';
-import dotenv from 'dotenv';
-dotenv.config();
+import ssmClient from './structures/SSMClient';
 const client = new ExtendedClient();
 
 // add commands to bot instance
@@ -38,4 +37,13 @@ for (const file of eventFiles) {
     }
 }
 
-client.login(process.env.BOT_TOKEN);
+// attempt to log in and start discord bot
+const login = async () => {
+    try {
+        client.login(await ssmClient.getParameter('/Bot/Bot_Token'));
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+login();

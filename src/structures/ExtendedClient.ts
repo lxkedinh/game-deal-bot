@@ -15,6 +15,7 @@ export default class ExtendedClient extends Client {
                 Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
                 Intents.FLAGS.DIRECT_MESSAGE_TYPING,
             ],
+            partials: ['MESSAGE', 'CHANNEL', 'USER'],
         });
     }
 }

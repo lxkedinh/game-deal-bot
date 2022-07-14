@@ -1,4 +1,12 @@
-import { MessageEmbed, ColorResolvable, Message } from 'discord.js';
+import {
+    MessageEmbed,
+    ColorResolvable,
+    Message,
+    InteractionCollector,
+    ButtonInteraction,
+    CacheType,
+    User,
+} from 'discord.js';
 import { embedColor } from './Embed';
 import { Game } from './Game';
 import { row } from './buttons';
@@ -122,26 +130,35 @@ export class Paginator {
         this.numPages = embeds.length;
     }
 
-    buttonHandler(msg: Message, userId: string) {
+    async buttonHandler(msg: Message, userID: string) {
+        // check if message is a partial and fetch it so we can collect input
+        // on buttons attched to message
+        if (msg.partial) {
+            try {
+                await msg.fetch();
+            } catch (error) {
+                throw error;
+            }
+        }
+
         const btnCollector = msg.createMessageComponentCollector({
             componentType: 'BUTTON',
             time: 15000,
         });
-        btnCollector.on('collect', (i) => {
-            if (i.user.id !== userId) {
+
+        btnCollector.on('collect', async (i) => {
+            if (i.user.id !== userID) {
                 i.deferUpdate();
                 return;
             }
 
             this.updatePage(i.customId);
 
-            i.deferUpdate();
-            msg.edit({
+            i.update({
                 embeds: [this.getCurrentPage()],
                 components: [row],
             });
         });
-
         return btnCollector;
     }
 

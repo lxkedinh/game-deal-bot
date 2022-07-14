@@ -2,7 +2,14 @@ import {
     SlashCommandStringOption,
     SlashCommandBuilder,
 } from '@discordjs/builders';
-import { CommandInteraction, MessageEmbed, Message } from 'discord.js';
+import {
+    CommandInteraction,
+    MessageEmbed,
+    Message,
+    InteractionCollector,
+    ButtonInteraction,
+    CacheType,
+} from 'discord.js';
 import { row } from '../structures/buttons';
 import { embedColor } from '../structures/Embed';
 import { fetchGameImg, searchDeals, searchGame } from '../requests';
@@ -37,6 +44,7 @@ module.exports = {
                                 `Your search for **${gameName}** came up empty. Try again.`
                             ),
                     ],
+                    ephemeral: true,
                 });
                 return;
             }
@@ -48,11 +56,13 @@ module.exports = {
             interaction.reply({
                 embeds: [paginator.getCurrentPage()],
                 components: [row],
+                ephemeral: true,
             });
 
             // Collect button input to navigate between pages
             const reply = (await interaction.fetchReply()) as Message;
-            const btnCollector = paginator.buttonHandler(
+
+            const btnCollector = await paginator.buttonHandler(
                 reply,
                 interaction.user.id
             );
@@ -142,6 +152,7 @@ module.exports = {
                             'Something went wrong with the search. Please try again.'
                         ),
                 ],
+                ephemeral: true,
             });
         }
     },
